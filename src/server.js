@@ -453,163 +453,163 @@ app.put('/values/:id', (req, res) => {
 
 // #################################### Save the users in /save db #############################################
 // Define the Mongoose schema and model
-const studentSchema8 = new mongoose.Schema({
-  userId: String,
-  name: String,
-  password: String,
-  classStatus: String,
-  seasonOne: Number,
-  seasonTwo: Number,
-  seasonThree: Number,
-  seasonFour: Number,
-  seasonFive: Number,
-  seasonSix: Number,
-});
-
-const Student8 = mongoose.model('theValue', studentSchema8); // Collection name will be `values`
-
-// Initialize user count
-let userCount6 = 1;
-const initializeUserCount6 = async () => {
-  try {
-    const lastStudent = await Student8.findOne().sort({ userId: -1 }).exec();
-    if (lastStudent) {
-      userCount6 = parseInt(lastStudent.userId.slice(2)) + 1; // Extract numeric part of userId
-    }
-  } catch (error) {
-    console.error('Error initializing user count:', error);
-  }
-};
-initializeUserCount6();
-
-// POST route to create a new student
-app.post('/save', async (req, res) => {
-  const userId = `FB${String(userCount6).padStart(3, '0')}`; // Generate unique userId
-  userCount6++; // Increment the user ID counter
-
-  try {
-    const newStudent = new Student8({
-      userId,
-      ...req.body,
-    });
-    await newStudent.save();
-    res.status(201).json(newStudent);
-  } catch (error) {
-    console.error('Error creating student:', error);
-    res.status(400).json({ error: 'Error creating student.' });
-  }
-});
-
-// GET route to fetch all students
-app.get('/save', async (req, res) => {
-  try {
-    const students = await Student8.find();
-    res.status(200).json(students);
-  } catch (error) {
-    console.error('Error fetching students:', error);
-    res.status(400).json({ error: 'Error fetching students.' });
-  }
-});
-
-// GET route to fetch a student by userId
-app.get('/save/:userId', async (req, res) => {
-  try {
-    const student = await Student8.findOne({ userId: req.params.userId });
-    if (!student) {
-      return res.status(404).json({ error: 'Student not found.' });
-    }
-    res.status(200).json(student);
-  } catch (error) {
-    console.error('Error fetching student:', error);
-    res.status(400).json({ error: 'Error fetching student.' });
-  }
-});
-
-// PUT route to update a student by userId
-app.put('/save/:userId', async (req, res) => {
-  try {
-    const updatedStudent = await Student8.findOneAndUpdate(
-      { userId: req.params.userId },
-      req.body,
-      { new: true, runValidators: true }
-    );
-    if (!updatedStudent) {
-      return res.status(404).json({ error: 'Student not found.' });
-    }
-    res.status(200).json(updatedStudent);
-  } catch (error) {
-    console.error('Error updating student:', error);
-    res.status(400).json({ error: 'Error updating student.' });
-  }
-});
-
-// DELETE route to remove a student by userId
-app.delete('/save/:userId', async (req, res) => {
-  try {
-    const deletedStudent = await Student8.findOneAndDelete({ userId: req.params.userId });
-    if (!deletedStudent) {
-      return res.status(404).json({ error: 'Student not found.' });
-    }
-    res.status(200).json({ message: 'Student deleted successfully!' });
-  } catch (error) {
-    console.error('Error deleting student:', error);
-    res.status(400).json({ error: 'Error deleting student.' });
-  }
-});
-
-// DELETE route to clear all students and reset userId
-app.delete('/save', async (req, res) => {
-  try {
-    await Student8.deleteMany({}); // Clear all documents
-    userCount6 = 1; // Reset user count
-    res.status(200).json({ message: 'All students deleted and userId reset successfully!' });
-  } catch (error) {
-    console.error('Error clearing students:', error);
-    res.status(400).json({ error: 'Error clearing students.' });
-  }
-});
-
-
-
-
-
-
-
-
-// app.get('/adminLogin', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../Admin/Choose one/index.html')); // Replace 'index.html' with your HTML file name
+// const studentSchema8 = new mongoose.Schema({
+//   userId: String,
+//   name: String,
+//   password: String,
+//   classStatus: String,
+//   seasonOne: Number,
+//   seasonTwo: Number,
+//   seasonThree: Number,
+//   seasonFour: Number,
+//   seasonFive: Number,
+//   seasonSix: Number,
 // });
 
-// Admin login endpoint
-app.post('/adminLogin', async (req, res) => {
-  try {
-    const { userId, password } = req.body;
-    const user = await Admin.findOne({ username: userId });
-    if (user && (await bcrypt.compare(password, user.password))) {
-      res.status(200).json({ success: true, message: 'Login successful', username: user.username });
-    } else {
-      res.status(401).json({ success: false, error: 'Invalid credentials' });
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, error: 'Internal server error' });
-  }
-});
+// const Student8 = mongoose.model('theValue', studentSchema8); // Collection name will be `values`
 
-// Change password endpoint
-app.post('/changePassword', async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const updated = await Admin.updateOne({ username }, { password: hashedPassword });
-    if (updated.modifiedCount > 0) {
-      res.status(200).json({ success: true, message: 'Password updated successfully' });
-    } else {
-      res.status(404).json({ success: false, error: 'User not found' });
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, error: 'Internal server error' });
-  }
-});
+// // Initialize user count
+// let userCount6 = 1;
+// const initializeUserCount6 = async () => {
+//   try {
+//     const lastStudent = await Student8.findOne().sort({ userId: -1 }).exec();
+//     if (lastStudent) {
+//       userCount6 = parseInt(lastStudent.userId.slice(2)) + 1; // Extract numeric part of userId
+//     }
+//   } catch (error) {
+//     console.error('Error initializing user count:', error);
+//   }
+// };
+// initializeUserCount6();
+
+// // POST route to create a new student
+// app.post('/save', async (req, res) => {
+//   const userId = `FB${String(userCount6).padStart(3, '0')}`; // Generate unique userId
+//   userCount6++; // Increment the user ID counter
+
+//   try {
+//     const newStudent = new Student8({
+//       userId,
+//       ...req.body,
+//     });
+//     await newStudent.save();
+//     res.status(201).json(newStudent);
+//   } catch (error) {
+//     console.error('Error creating student:', error);
+//     res.status(400).json({ error: 'Error creating student.' });
+//   }
+// });
+
+// // GET route to fetch all students
+// app.get('/save', async (req, res) => {
+//   try {
+//     const students = await Student8.find();
+//     res.status(200).json(students);
+//   } catch (error) {
+//     console.error('Error fetching students:', error);
+//     res.status(400).json({ error: 'Error fetching students.' });
+//   }
+// });
+
+// // GET route to fetch a student by userId
+// app.get('/save/:userId', async (req, res) => {
+//   try {
+//     const student = await Student8.findOne({ userId: req.params.userId });
+//     if (!student) {
+//       return res.status(404).json({ error: 'Student not found.' });
+//     }
+//     res.status(200).json(student);
+//   } catch (error) {
+//     console.error('Error fetching student:', error);
+//     res.status(400).json({ error: 'Error fetching student.' });
+//   }
+// });
+
+// // PUT route to update a student by userId
+// app.put('/save/:userId', async (req, res) => {
+//   try {
+//     const updatedStudent = await Student8.findOneAndUpdate(
+//       { userId: req.params.userId },
+//       req.body,
+//       { new: true, runValidators: true }
+//     );
+//     if (!updatedStudent) {
+//       return res.status(404).json({ error: 'Student not found.' });
+//     }
+//     res.status(200).json(updatedStudent);
+//   } catch (error) {
+//     console.error('Error updating student:', error);
+//     res.status(400).json({ error: 'Error updating student.' });
+//   }
+// });
+
+// // DELETE route to remove a student by userId
+// app.delete('/save/:userId', async (req, res) => {
+//   try {
+//     const deletedStudent = await Student8.findOneAndDelete({ userId: req.params.userId });
+//     if (!deletedStudent) {
+//       return res.status(404).json({ error: 'Student not found.' });
+//     }
+//     res.status(200).json({ message: 'Student deleted successfully!' });
+//   } catch (error) {
+//     console.error('Error deleting student:', error);
+//     res.status(400).json({ error: 'Error deleting student.' });
+//   }
+// });
+
+// // DELETE route to clear all students and reset userId
+// app.delete('/save', async (req, res) => {
+//   try {
+//     await Student8.deleteMany({}); // Clear all documents
+//     userCount6 = 1; // Reset user count
+//     res.status(200).json({ message: 'All students deleted and userId reset successfully!' });
+//   } catch (error) {
+//     console.error('Error clearing students:', error);
+//     res.status(400).json({ error: 'Error clearing students.' });
+//   }
+// });
+
+
+
+
+
+
+
+
+// // app.get('/adminLogin', (req, res) => {
+// //   res.sendFile(path.join(__dirname, '../Admin/Choose one/index.html')); // Replace 'index.html' with your HTML file name
+// // });
+
+// // Admin login endpoint
+// app.post('/adminLogin', async (req, res) => {
+//   try {
+//     const { userId, password } = req.body;
+//     const user = await Admin.findOne({ username: userId });
+//     if (user && (await bcrypt.compare(password, user.password))) {
+//       res.status(200).json({ success: true, message: 'Login successful', username: user.username });
+//     } else {
+//       res.status(401).json({ success: false, error: 'Invalid credentials' });
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ success: false, error: 'Internal server error' });
+//   }
+// });
+
+// // Change password endpoint
+// app.post('/changePassword', async (req, res) => {
+//   try {
+//     const { username, password } = req.body;
+//     const hashedPassword = await bcrypt.hash(password, 10);
+//     const updated = await Admin.updateOne({ username }, { password: hashedPassword });
+//     if (updated.modifiedCount > 0) {
+//       res.status(200).json({ success: true, message: 'Password updated successfully' });
+//     } else {
+//       res.status(404).json({ success: false, error: 'User not found' });
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ success: false, error: 'Internal server error' });
+//   }
+// });
 
