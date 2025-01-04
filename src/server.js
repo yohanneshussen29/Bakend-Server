@@ -11,6 +11,20 @@ app.use(bodyParser.json());
 
 app.use(cors());
 
+app.use(cors());
+
+// OR enable CORS for specific origins
+const allowedOrigins = ['http://127.0.0.1:5500', 'http://localhost:5500'];
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+}));
+
 // MongoDB connection (Replace with your actual connection string)
 mongoose.connect('mongodb+srv://yohannes:yohannes@cluster0.algru.mongodb.net/schoolDB?retryWrites=true&w=majority',
  { useNewUrlParser: true, useUnifiedTopology: true })
