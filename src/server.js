@@ -449,7 +449,7 @@ app.put('/values/:id', (req, res) => {
 
 app.get('/save/:userId', async (req, res) => {
   try {
-    const student = await Student6.findOne({ userId: req.params.userId });
+    const student = await news.findOne({ userId: req.params.userId });
     if (!student) {
       return res.status(404).json({ error: 'Student not found' });
     }
@@ -464,7 +464,7 @@ app.put('/save/:userId', async (req, res) => {
     const userId = req.params.userId;
 
     // Update student by userId
-    const updatedStudent = await Student6.findOneAndUpdate(
+    const updatedStudent = await news.findOneAndUpdate(
       { userId },   // Find student by userId
       { ...req.body }, // Update fields from request body
       { new: true, runValidators: true } // Return updated document
@@ -484,7 +484,7 @@ app.put('/save/:userId', async (req, res) => {
 
 
 // MongoDB Model
-const Student6 = mongoose.model('Student6', new mongoose.Schema({
+const news = mongoose.model('news', new mongoose.Schema({
   userId: String, // Unique ID for the student
   name: String,
   password: String,
@@ -501,7 +501,7 @@ let userCount6 = 1;
 
 // Initialize user count from the database
 const initializeUserCount6 = async () => {
-  const lastStudent = await Student6.findOne().sort({ userId: -1 }).exec();
+  const lastStudent = await news.findOne().sort({ userId: -1 }).exec();
   if (lastStudent) {
     userCount6 = parseInt(lastStudent.userId.slice(2)) + 1; // Extract numeric part of userId
   }
@@ -514,7 +514,7 @@ app.post('/save', async (req, res) => {
   userCount6++; // Increment the user ID counter
 
   try {
-    const newStudent = new Student6({
+    const newStudent = new news({
       userId: userId, // Automatically generated
       ...req.body,    // Body contains the student's data
     });
@@ -528,7 +528,7 @@ app.post('/save', async (req, res) => {
 // PUT route to update a student by userId
 app.put('/save/:userId', async (req, res) => {
   try {
-    const updatedStudent = await Student6.findOneAndUpdate(
+    const updatedStudent = await news.findOneAndUpdate(
       { userId: req.params.userId },
       req.body,
       { new: true }  // Returns the updated document
@@ -545,7 +545,7 @@ app.put('/save/:userId', async (req, res) => {
 // Update student by userId
 app.put('/save/:userId', async (req, res) => {
   try {
-    const updatedStudent = await Student6.findOneAndUpdate(
+    const updatedStudent = await news.findOneAndUpdate(
       { userId: req.params.userId },
       req.body,
       { new: true }
@@ -573,7 +573,7 @@ app.get('/save/:userId', (req, res) => {
 // DELETE route to remove a student by userId
 app.delete('/save/:userId', async (req, res) => {
   try {
-    const deletedStudent = await Student6.findOneAndDelete({ userId: req.params.userId });
+    const deletedStudent = await news.findOneAndDelete({ userId: req.params.userId });
     if (!deletedStudent) {
       return res.status(404).json({ error: 'Student not found.' });
     }
@@ -586,7 +586,7 @@ app.delete('/save/:userId', async (req, res) => {
 // GET route to fetch all students
 app.get('/save', async (req, res) => {
   try {
-    const students = await Student6.find();
+    const students = await news.find();
     res.status(200).json(students);
   } catch (error) {
     res.status(400).json({ error: 'Error fetching students.' });
@@ -609,7 +609,7 @@ app.get('/save/:userId', async (req, res) => {
 // DELETE route to clear all students and reset userId
 app.delete('/save', async (req, res) => {
   try {
-    await Student6.deleteMany({}); // Delete all students
+    await news.deleteMany({}); // Delete all students
     userCount6 = 1; // Reset the userCount to start IDs from FB001
     res.status(200).json({ message: 'All students deleted and userId reset successfully!' });
   } catch (error) {
@@ -624,7 +624,7 @@ app.put('/save/:userId', async (req, res) => {
     const updatedData = req.body;
 
     // Find the student by userId and update their data
-    const student = await Student6.findOneAndUpdate({ userId }, updatedData, { new: true });
+    const student = await news.findOneAndUpdate({ userId }, updatedData, { new: true });
 
     if (!student) {
       return res.status(404).json({ message: 'User not found' });
