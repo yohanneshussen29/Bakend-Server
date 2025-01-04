@@ -446,7 +446,7 @@ app.put('/values/:id', (req, res) => {
 
 // #################################### Save the users in /save db #############################################
 // MongoDB Model
-const news = mongoose.model('news', new mongoose.Schema({
+const studentSchema8 = new mongoose.Schema({
   userId: String, // Unique ID for the student
   name: String,
   password: String,
@@ -457,53 +457,20 @@ const news = mongoose.model('news', new mongoose.Schema({
   seasonFour: Number,
   seasonFive: Number,
   seasonSix: Number,
-}));
-
-app.get('/save/:userId', async (req, res) => {
-  try {
-    const student = await news.findOne({ userId: req.params.userId });
-    if (!student) {
-      return res.status(404).json({ error: 'Student not found' });
-    }
-    res.status(200).json(student);
-  } catch (error) {
-    console.error('Error fetching student:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-app.put('/save/:userId', async (req, res) => {
-  try {
-    const userId = req.params.userId;
-
-    // Update student by userId
-    const updatedStudent = await news.findOneAndUpdate(
-      { userId },   // Find student by userId
-      { ...req.body }, // Update fields from request body
-      { new: true, runValidators: true } // Return updated document
-    );
-
-    if (!updatedStudent) {
-      return res.status(404).json({ error: 'Student not found' });
-    }
-
-    res.status(200).json(updatedStudent); // Return the updated student
-  } catch (error) {
-    console.error('Error updating student:', error);
-    res.status(500).json({ error: 'Failed to update student.' });
-  }
 });
 
+const Student8 = mongoose.model('Value', studentSchema8);
 
-
-
-
+// Initialize user count
 let userCount6 = 1;
-
-// Initialize user count from the database
 const initializeUserCount6 = async () => {
-  const lastStudent = await news.findOne().sort({ userId: -1 }).exec();
-  if (lastStudent) {
-    userCount6 = parseInt(lastStudent.userId.slice(2)) + 1; // Extract numeric part of userId
+  try {
+    const lastStudent = await Student8.findOne().sort({ userId: -1 }).exec();
+    if (lastStudent) {
+      userCount6 = parseInt(lastStudent.userId.slice(2)) + 1; // Extract numeric part of userId
+    }
+  } catch (error) {
+    console.error('Error initializing user count:', error);
   }
 };
 initializeUserCount6();
@@ -514,81 +481,25 @@ app.post('/save', async (req, res) => {
   userCount6++; // Increment the user ID counter
 
   try {
-    const newStudent = new news({
-      userId: userId, // Automatically generated
-      ...req.body,    // Body contains the student's data
+    const newStudent = new Student8({
+      userId,
+      ...req.body,
     });
     await newStudent.save();
     res.status(201).json(newStudent);
   } catch (error) {
+    console.error('Error creating student:', error);
     res.status(400).json({ error: 'Error creating student.' });
-  }
-});
-
-// PUT route to update a student by userId
-app.put('/save/:userId', async (req, res) => {
-  try {
-    const updatedStudent = await news.findOneAndUpdate(
-      { userId: req.params.userId },
-      req.body,
-      { new: true }  // Returns the updated document
-    );
-    if (!updatedStudent) {
-      return res.status(404).json({ error: 'Student not found.' });
-    }
-    res.status(200).json(updatedStudent);
-  } catch (error) {
-    res.status(400).json({ error: 'Error updating student.' });
-  }
-});
-
-// Update student by userId
-app.put('/save/:userId', async (req, res) => {
-  try {
-    const updatedStudent = await news.findOneAndUpdate(
-      { userId: req.params.userId },
-      req.body,
-      { new: true }
-    );
-    if (!updatedStudent) {
-      return res.status(404).json({ error: 'Student not found.' });
-    }
-    res.status(200).json(updatedStudent);
-  } catch (error) {
-    res.status(400).json({ error: 'Error updating student.' });
-  }
-});
-
-app.get('/save/:userId', (req, res) => {
-  const userId = req.params.userId;
-  const user = database.find(user => user.id === userId); // Example database query
-  if (user) {
-    res.json(user);
-  } else {
-    res.status(404).send('User not found');
-  }
-});
-
-
-// DELETE route to remove a student by userId
-app.delete('/save/:userId', async (req, res) => {
-  try {
-    const deletedStudent = await news.findOneAndDelete({ userId: req.params.userId });
-    if (!deletedStudent) {
-      return res.status(404).json({ error: 'Student not found.' });
-    }
-    res.status(200).json({ message: 'Student deleted successfully!' });
-  } catch (error) {
-    res.status(400).json({ error: 'Error deleting student.' });
   }
 });
 
 // GET route to fetch all students
 app.get('/save', async (req, res) => {
   try {
-    const students = await news.find();
+    const students = await Student8.find();
     res.status(200).json(students);
   } catch (error) {
+    console.error('Error fetching students:', error);
     res.status(400).json({ error: 'Error fetching students.' });
   }
 });
@@ -596,23 +507,57 @@ app.get('/save', async (req, res) => {
 // GET route to fetch a student by userId
 app.get('/save/:userId', async (req, res) => {
   try {
-    const student = await Student.findOne({ userId: req.params.userId });
+    const student = await Student8.findOne({ userId: req.params.userId });
     if (!student) {
       return res.status(404).json({ error: 'Student not found.' });
     }
     res.status(200).json(student);
   } catch (error) {
+    console.error('Error fetching student:', error);
     res.status(400).json({ error: 'Error fetching student.' });
+  }
+});
+
+// PUT route to update a student by userId
+app.put('/save/:userId', async (req, res) => {
+  try {
+    const updatedStudent = await Student8.findOneAndUpdate(
+      { userId: req.params.userId },
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!updatedStudent) {
+      return res.status(404).json({ error: 'Student not found.' });
+    }
+    res.status(200).json(updatedStudent);
+  } catch (error) {
+    console.error('Error updating student:', error);
+    res.status(400).json({ error: 'Error updating student.' });
+  }
+});
+
+// DELETE route to remove a student by userId
+app.delete('/save/:userId', async (req, res) => {
+  try {
+    const deletedStudent = await Student8.findOneAndDelete({ userId: req.params.userId });
+    if (!deletedStudent) {
+      return res.status(404).json({ error: 'Student not found.' });
+    }
+    res.status(200).json({ message: 'Student deleted successfully!' });
+  } catch (error) {
+    console.error('Error deleting student:', error);
+    res.status(400).json({ error: 'Error deleting student.' });
   }
 });
 
 // DELETE route to clear all students and reset userId
 app.delete('/save', async (req, res) => {
   try {
-    await news.deleteMany({}); // Delete all students
+    await Student.deleteMany({});
     userCount6 = 1; // Reset the userCount to start IDs from FB001
     res.status(200).json({ message: 'All students deleted and userId reset successfully!' });
   } catch (error) {
+    console.error('Error clearing students:', error);
     res.status(400).json({ error: 'Error clearing students.' });
   }
 });
@@ -624,7 +569,7 @@ app.put('/save/:userId', async (req, res) => {
     const updatedData = req.body;
 
     // Find the student by userId and update their data
-    const student = await news.findOneAndUpdate({ userId }, updatedData, { new: true });
+    const student = await Student8.findOneAndUpdate({ userId }, updatedData, { new: true });
 
     if (!student) {
       return res.status(404).json({ message: 'User not found' });
@@ -653,37 +598,6 @@ app.put('/save/:userId', async (req, res) => {
 
   } catch (error) {
     return res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// Define a Mongoose schema and model for the user
-const userSchema6 = new mongoose.Schema({
-  userId: { type: String, required: true, unique: true },
-  name: { type: String, required: true },
-  classStatus: { type: String, required: true },
-  seasonOne: { type: Number, default: 0 },
-  seasonTwo: { type: Number, default: 0 },
-  seasonThree: { type: Number, default: 0 },
-  seasonFour: { type: Number, default: 0 },
-  seasonFive: { type: Number, default: 0 },
-  seasonSix: { type: Number, default: 0 },
-});
-
-const User6 = mongoose.model('User6', userSchema6);
-
-// API route to fetch user details by userId
-app.get('/save/:userId', async (req, res) => {
-  const { userId } = req.params;
-
-  try {
-    const user = await User6.findOne({ userId });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-    res.json(user);
-  } catch (err) {
-    console.error('Error fetching user data:', err);
-    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
