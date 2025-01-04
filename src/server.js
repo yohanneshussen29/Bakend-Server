@@ -1,13 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const cors = require('cors');
 const bcrypt = require('bcrypt');
+const cors = require('cors');
+
 const app = express();
-const path = require('path');
+
+
+app.use(bodyParser.json());
 
 app.use(cors());
-app.use(bodyParser.json());
 
 // MongoDB connection (Replace with your actual connection string)
 mongoose.connect('mongodb+srv://yohannes:yohannes@cluster0.algru.mongodb.net/schoolDB?retryWrites=true&w=majority',
