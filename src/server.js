@@ -10,13 +10,16 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // MongoDB connection (Replace with your actual connection string)
-mongoose.connect('mongodb+srv://yohannes:yohannes@cluster0.algru.mongodb.net/schoolDB?retryWrites=true&w=majority', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect(
+  'mongodb+srv://yohannes:yohannes@cluster0.algru.mongodb.net/schoolDB?retryWrites=true&w=majority',
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 90000,
+  }
+)
   .then(() => console.log('Connected to MongoDB'))
-  .catch((err) => console.log('Error connecting to MongoDB:', err));
-  
+  .catch((err) => console.error('Error connecting to MongoDB:', err));
 
 // Admin schema
 const adminSchema = new mongoose.Schema({
@@ -451,7 +454,7 @@ app.put('/values/:id', (req, res) => {
 // #################################### Save the users in /save db #############################################
 // Define the Mongoose schema and model
 const studentSchema8 = new mongoose.Schema({
-  userId: String, // Unique ID for the student
+  userId: String,
   name: String,
   password: String,
   classStatus: String,
@@ -463,7 +466,7 @@ const studentSchema8 = new mongoose.Schema({
   seasonSix: Number,
 });
 
-const Student8 = mongoose.model('value', studentSchema8);
+const Student8 = mongoose.model('theValue', studentSchema8); // Collection name will be `values`
 
 // Initialize user count
 let userCount6 = 1;
