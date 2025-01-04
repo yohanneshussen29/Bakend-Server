@@ -10,9 +10,13 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // MongoDB connection (Replace with your actual connection string)
-mongoose.connect('mongodb+srv://yohannes:yohannes@cluster0.algru.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/schoolDB', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb+srv://yohannes:yohannes@cluster0.algru.mongodb.net/schoolDB?retryWrites=true&w=majority', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.log('Error connecting to MongoDB:', err));
+  
 
 // Admin schema
 const adminSchema = new mongoose.Schema({
@@ -445,7 +449,7 @@ app.put('/values/:id', (req, res) => {
 
 
 // #################################### Save the users in /save db #############################################
-// MongoDB Model
+// Define the Mongoose schema and model
 const studentSchema8 = new mongoose.Schema({
   userId: String, // Unique ID for the student
   name: String,
@@ -459,7 +463,7 @@ const studentSchema8 = new mongoose.Schema({
   seasonSix: Number,
 });
 
-const Student8 = mongoose.model('Value', studentSchema8);
+const Student8 = mongoose.model('value', studentSchema8);
 
 // Initialize user count
 let userCount6 = 1;
@@ -553,54 +557,14 @@ app.delete('/save/:userId', async (req, res) => {
 // DELETE route to clear all students and reset userId
 app.delete('/save', async (req, res) => {
   try {
-    await Student.deleteMany({});
-    userCount6 = 1; // Reset the userCount to start IDs from FB001
+    await Student8.deleteMany({}); // Clear all documents
+    userCount6 = 1; // Reset user count
     res.status(200).json({ message: 'All students deleted and userId reset successfully!' });
   } catch (error) {
     console.error('Error clearing students:', error);
     res.status(400).json({ error: 'Error clearing students.' });
   }
 });
-
-// PUT route to update a student
-app.put('/save/:userId', async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const updatedData = req.body;
-
-    // Find the student by userId and update their data
-    const student = await Student8.findOneAndUpdate({ userId }, updatedData, { new: true });
-
-    if (!student) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Calculate the sum and average rank after update
-    const seasonScores = {
-      seasonOne: student.seasonOne || 0,
-      seasonTwo: student.seasonTwo || 0,
-      seasonThree: student.seasonThree || 0,
-      seasonFour: student.seasonFour || 0,
-      seasonFive: student.seasonFive || 0,
-      seasonSix: student.seasonSix || 0,
-    };
-
-    const scoresArray = Object.values(seasonScores);
-    const sum = scoresArray.reduce((total, score) => total + score, 0);
-    const averageRank = sum / scoresArray.length;
-
-    res.status(200).json({
-      password: student.password,
-      ...seasonScores,
-      sum,
-      averageRank,
-    });
-
-  } catch (error) {
-    return res.status(500).json({ message: 'Server error' });
-  }
-});
-
 
 
 
