@@ -445,7 +445,19 @@ app.put('/values/:id', (req, res) => {
 
 
 // #################################### Save the users in /save db #############################################
-
+// MongoDB Model
+const news = mongoose.model('news', new mongoose.Schema({
+  userId: String, // Unique ID for the student
+  name: String,
+  password: String,
+  classStatus: String,
+  seasonOne: Number,
+  seasonTwo: Number,
+  seasonThree: Number,
+  seasonFour: Number,
+  seasonFive: Number,
+  seasonSix: Number,
+}));
 
 app.get('/save/:userId', async (req, res) => {
   try {
@@ -483,19 +495,7 @@ app.put('/save/:userId', async (req, res) => {
 
 
 
-// MongoDB Model
-const news = mongoose.model('news', new mongoose.Schema({
-  userId: String, // Unique ID for the student
-  name: String,
-  password: String,
-  classStatus: String,
-  seasonOne: Number,
-  seasonTwo: Number,
-  seasonThree: Number,
-  seasonFour: Number,
-  seasonFive: Number,
-  seasonSix: Number,
-}));
+
 
 let userCount6 = 1;
 
